@@ -99,7 +99,7 @@ function setup_backup_task() {
     local cron_job="$schedule root mount $BACKUP_DEVICE $MOUNT_POINT && tar -czf $BACKUP_DIR/${USER_SURNAME}_\$(date +\%F_\%T).tar.gz -C $source_dir . && umount $MOUNT_POINT"
     
     echo "Setting up a cron task..."
-    echo "$cron_job" | sudo tee /etc/cron.d/backup_task > /dev/null
+    echo "$cron_job" | tee /etc/cron.d/backup_task > /dev/null
     chmod 0644 /etc/cron.d/backup_task
     systemctl restart cron
 
