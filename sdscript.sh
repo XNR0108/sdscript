@@ -16,7 +16,7 @@ function create_filesystem() {
     local fs_size=$(get_filesystem_size)
     echo "Creating a file system ext3 on ${BACKUP_DEVICE}..."
     #Creating a file system on the device
-    sudo mkfs.ext3 "$BACKUP_DEVICE"
+    mkfs.ext3 "$BACKUP_DEVICE"
     if [ $? -eq 0 ]; then
         echo "The file system has been successfully created."
     else
@@ -24,13 +24,13 @@ function create_filesystem() {
         exit 1
     fi
 
-    sudo mkdir -p "$MOUNT_POINT"
+    mkdir -p "$MOUNT_POINT"
     echo "The mount point has been created: $MOUNT_POINT"
 }
 #Mounting the storage
 function mount_storage() {
     echo "Mounting the storage..."
-    sudo mount "$BACKUP_DEVICE" "$MOUNT_POINT"
+    mount "$BACKUP_DEVICE" "$MOUNT_POINT"
     if [ $? -eq 0 ]; then
         echo "The storage is mounted in: $MOUNT_POINT"
     else
@@ -41,7 +41,7 @@ function mount_storage() {
 #Unmounting the storage
 function unmount_storage() {
     echo "Unmounting the storage..."
-    sudo umount "$MOUNT_POINT"
+    umount "$MOUNT_POINT"
     if [ $? -eq 0 ]; then
         echo "The storage has been successfully unmounted."
     else
@@ -57,8 +57,8 @@ function create_backup() {
 
     echo "Creating a backup copy: $backup_path"
 
-    sudo mkdir -p "$BACKUP_DIR"
-    sudo tar -czf "$backup_path" -C "$source_dir" .
+    mkdir -p "$BACKUP_DIR"
+    tar -czf "$backup_path" -C "$source_dir" .
     if [ $? -eq 0 ]; then
         echo "The backup was successfully created."
     else
@@ -76,7 +76,7 @@ function cleanup_backups() {
         local backups_to_delete=$(($backups_count - $MAX_BACKUPS))
         for ((i=backups_count-1; i>=MAX_BACKUPS; i--)); do
             echo "Deleting an old backup: ${backups[$i]}"
-            sudo rm -f "${backups[$i]}"
+            rm -f "${backups[$i]}"
         done
     fi
 }
@@ -100,8 +100,8 @@ function setup_backup_task() {
     
     echo "Setting up a cron task..."
     echo "$cron_job" | sudo tee /etc/cron.d/backup_task > /dev/null
-    sudo chmod 0644 /etc/cron.d/backup_task
-    sudo systemctl restart cron
+    chmod 0644 /etc/cron.d/backup_task
+    systemctl restart cron
 
     echo "The backup task has been successfully configured."
 }
@@ -128,8 +128,8 @@ if [ "$choice" -gt 0 ] && [ "$choice" -le "$backups_count" ]; then
         read -r restore_path
 
         echo "Recover ${backup_to_restore} in ${restore_path}"
-        sudo mkdir -p "$restore_path"
-        sudo tar -xzf "$backup_to_restore" -C "$restore_path"
+        mkdir -p "$restore_path"
+        tar -xzf "$backup_to_restore" -C "$restore_path"
         if [ $? -eq 0 ]; then
             echo "The backup was successfully restored."
         else
