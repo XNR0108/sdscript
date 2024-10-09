@@ -96,7 +96,7 @@ function setup_backup_task() {
         *) echo "Wrong choice."; exit 1 ;;
     esac
 
-    local cron_job="$schedule root mount $BACKUP_DEVICE $MOUNT_POINT && tar -czf $BACKUP_DIR/${USER_SURNAME}_\$(date +\%F_\%T).tar.gz -C $source_dir . && umount $MOUNT_POINT"
+    local cron_job="$schedule root mount $BACKUP_DEVICE $MOUNT_POINT && tar -czf $BACKUP_DIR/${USER_SURNAME}_\$(date +\%F_\%T).tar.gz -C $source_dir & && umount $MOUNT_POINT"
     
     echo "Setting up a cron task..."
     echo "$cron_job" | tee /etc/cron.d/backup_task > /dev/null
